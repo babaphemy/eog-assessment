@@ -1,15 +1,12 @@
-import React from "react";
-import Button from '@material-ui/core/Button';
+import React from 'react';
 import Card from "@material-ui/core/Card";
 import CardHeaderRaw from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
-import CardActions from '@material-ui/core/CardActions';
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import { withStyles } from "@material-ui/core/styles";
 import AvatarRaw from "@material-ui/core/Avatar";
-import { Link } from "react-router-dom";
 
 const cardStyles = theme => ({
   root: {
@@ -37,43 +34,38 @@ const styles = {
   }
 };
 
-const NowWhat = props => {
+const Dashview = props => {
   const { classes } = props;
   return (
     <Card className={classes.card}>
-      <CardHeader title="OK, femi, you're all setup. Now What?" />
+      <CardHeader title=  {props.title} />
       <CardContent>
         <List>
           <ListItem>
-            <Avatar>1</Avatar>
-            <ListItemText primary="Connect to the Drone API" />
+            <Avatar className={classes.avatar}>T</Avatar>
+            <ListItemText primary="Temperature" secondary={props.temp} />
           </ListItem>
           <ListItem>
-            <Avatar>2</Avatar>
-            <ListItemText primary="Create your Visualization" />
+            <Avatar className={classes.orangeAvatar}>LA</Avatar>
+            <ListItemText primary="Latitude" secondary={props.lat} />
 
-            <CardActions>
-              <Button size="small" color="primary">
-                <Link to="/dashboard">Dashboard</Link>
-              </Button>
-              <Button size="small" color="primary">
-                <Link to="/chart">Chart</Link>
-              </Button>
-            </CardActions>
 
           </ListItem>
           <ListItem>
-            <Avatar>3</Avatar>
-            <ListItemText primary="Poll the API" />
+            <Avatar className={classes.blueAvatar}>LO</Avatar>
+            <ListItemText primary="Longitude" secondary={props.long} />
           </ListItem>
           <ListItem>
-            <Avatar>4</Avatar>
-            <ListItemText primary="Submit Your App" />
+            <Avatar className={classes.avatar}>I</Avatar>
+            <ListItemText primary="Last Received" secondary={props.lastr} />
           </ListItem>
         </List>
       </CardContent>
     </Card>
   );
-};
 
-export default withStyles(styles)(NowWhat);
+}
+
+
+
+export default withStyles(styles)(Dashview);

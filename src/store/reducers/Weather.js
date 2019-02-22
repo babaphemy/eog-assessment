@@ -17,6 +17,7 @@ const startLoading = (state, action) => {
   return { ...state, loading: true };
 };
 
+
 const weatherIDReceived = (state, action) => {
   return { ...state, weatherId: action.id };
 };
