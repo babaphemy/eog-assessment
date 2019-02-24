@@ -17,22 +17,7 @@ import * as actions from "../actions";
 
 */
 
-// fetch 30 min drone and get last
 
-function* watchFetchDrone() {
-  const { error, data } = yield call(API.findDrone);
-  if(error) {
-    yield put({ type: actions.API_ERROR, code: error.code });
-    yield cancel();
-    return;
-  }
-  const position = data.data.pop() ;
-  //console.log(position);
-  const latitude = position.latitude;//data.data[position] ? data.data[position].latitude : -95.366302;
-  const longitude = position.longitude; //data.data[position] ? data.data[position].longitude : 29.766083;
-  yield put({ type: actions.FETCH_WEATHER, latitude,longitude});
-
-}
 
 
 function* watchWeatherIdReceived(action) {
@@ -70,9 +55,8 @@ function* watchFetchWeather(action) {
 
 function* watchAppLoad() {
   yield all([
-    takeEvery(actions.FETCH_WEATHER, watchFetchWeather),
+    //takeEvery(actions.FETCH_WEATHER, watchFetchWeather),
     takeEvery(actions.WEATHER_ID_RECEIVED, watchWeatherIdReceived),
-    takeEvery(actions.FETCH_DRONE, watchFetchDrone),
   ]);
 }
 

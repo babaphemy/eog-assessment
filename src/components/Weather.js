@@ -29,18 +29,18 @@ class Weather extends Component {
       loading,
       name,
       weather_state_name,
-      latitude,
-      longitude,
       temperatureinFahrenheit
-    } = this.props;
+    } = this.props.wthr;
+    const latitude = this.props.drn.latitude;
+    const longitude = this.props.drn.longitude;
     if (loading) return <LinearProgress />;
     return (
       <div>
       <Dash
         title={`Weather in ${name}: ${weather_state_name} `}
-        temp={this.props.temperatureinFahrenheit}
+        temp={`${temperatureinFahrenheit} `}
         lat={`${latitude} `}
-        long={this.props.longitude}
+        long={`${longitude} `}
         lastr={'3 seconds'}
       />
       </div>
@@ -48,24 +48,13 @@ class Weather extends Component {
   }
 }
 
-const mapState = (state, ownProps) => {
-  const {
-    loading,
-    name,
-    weather_state_name,
-    latitude,
-    longitude,
-    temperatureinFahrenheit
-  } = state.weather;
+const mapStateToProps = state => {
   return {
-    loading,
-    name,
-    weather_state_name,
-    latitude,
-    longitude,
-    temperatureinFahrenheit
+    wthr: state.weather,
+    drn: state.drone
   };
 };
+
 
 const mapDispatch = dispatch => ({
   onLoad: () =>
@@ -78,6 +67,6 @@ const mapDispatch = dispatch => ({
 });
 
 export default connect(
-  mapState,
+  mapStateToProps,
   mapDispatch
 )(Weather);

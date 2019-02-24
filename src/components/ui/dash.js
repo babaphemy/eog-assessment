@@ -55,6 +55,7 @@ const Dashview = props => {
             <Avatar className={classes.blueAvatar}>LO</Avatar>
             <ListItemText primary="Longitude" secondary={props.long} />
           </ListItem>
+
           <ListItem>
             <Avatar className={classes.avatar}>I</Avatar>
             <ListItemText primary="Last Received" secondary={props.lastr} />

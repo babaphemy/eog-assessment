@@ -6,16 +6,14 @@ const initialState = {
   name: "",
   temperature: "",
   weather_state_name: "",
-  latitude: null,
-  longitude: null,
   data: {}
 };
 
 const toF = c => (c * 9) / 5 + 32;
 
-const startLoading = (state, action) => {
-  return { ...state, loading: true };
-};
+//const startLoading = (state, action) => {
+//  return { ...state, loading: true };
+//};
 
 
 const weatherIDReceived = (state, action) => {
@@ -28,13 +26,11 @@ const weatherDataRecevied = (state, action) => {
   const weather = data.consolidated_weather[0];
   const { weather_state_name, the_temp } = weather;
   const { latt_long, title: name } = data;
-  const [latitude, longitude] = latt_long.split(",");
+  //const [latitude, longitude] = latt_long.split(",");
 
   return {
     ...state,
     loading: false,
-    latitude,
-    longitude,
     temperatureinCelsius: the_temp,
     temperatureinFahrenheit: toF(the_temp),
     weather_state_name,
@@ -44,8 +40,8 @@ const weatherDataRecevied = (state, action) => {
 };
 
 const handlers = {
-  [actions.FETCH_WEATHER]: startLoading,
-  [actions.WEATHER_ID_RECEIVED]: weatherIDReceived,
+//  [actions.FETCH_WEATHER]: startLoading,
+  [actions.WEATHER_ID_RECEIVED]:weatherIDReceived,
   [actions.WEATHER_DATA_RECEIVED]: weatherDataRecevied
 };
 
