@@ -2,7 +2,7 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import Home from '../components/NowWhat';
-import Chartview from '../components/ui/chart';
+import Chartview from './Map';
 import Dashview from './Weather';
 
 const Main = () => (
