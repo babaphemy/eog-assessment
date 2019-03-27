@@ -9,7 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header";
 import Wrapper from "./components/Wrapper";
 import Main from "./components/main";
-import NowWhat from "./components/NowWhat";
 
 const store = createStore();
 const theme = createMuiTheme({
