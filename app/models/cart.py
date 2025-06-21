@@ -18,7 +18,7 @@ class ShoppingCart(BaseModel):
 
 
 class ShoppingCartData(BaseModel):
-    """SHopping Cart Response Data."""
+    """Shopping Cart Response Data."""
 
     subTotal: float = Field(
         ..., ge=0, description="Subtotal of cart items. Before tax."

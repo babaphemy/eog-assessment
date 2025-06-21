@@ -13,10 +13,10 @@ from app.services.price_compare import (
     AppediaResponse,
     MicromazonResponse,
     GoogditResponse,
-    GoogditLocation,
     PriceResult,
     ComparisonResult,
 )
+from app.models.platform import GoogditLocation
 
 
 class TestPydanticModels:
