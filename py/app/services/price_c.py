@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class PlatformType(str, Enum):
     """Supported platforms for price comparison."""
 
-    HEB_DIGITAL = "HebDigital"
+    APPEDIA = "Appedia"
     MICROMAZON = "Micromazon"
     GOOGDIT = "Googdit"
 
@@ -157,7 +157,7 @@ class PriceComparisonService(BaseModel):
             PlatformConfig(
                 upc=101,
                 url="https://appedia.heb-platform-interview.hebdigital-prd.com/api/v1/itemdata?upc=101",
-                platform=PlatformType.HEB_DIGITAL,
+                platform=PlatformType.APPEDIA,
             ),
             PlatformConfig(
                 upc=101,
