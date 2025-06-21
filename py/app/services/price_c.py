@@ -5,6 +5,7 @@ Price comparison service using Pydantic models for data validation.
 import asyncio
 import logging
 from typing import Dict, List, Optional
+from app.utils.constants import GOOGDIT_PRICE_DIVISOR
 from enum import Enum
 
 import httpx
@@ -91,7 +92,7 @@ class GoogditResponse(BaseModel):
     @property
     def price_float(self) -> float:
         """Convert microcents to dollars."""
-        return self.p / 100_000_000
+        return self.p / GOOGDIT_PRICE_DIVISOR
 
     @property
     def in_stock(self) -> bool:
