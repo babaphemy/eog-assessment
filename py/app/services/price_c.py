@@ -91,7 +91,7 @@ class GoogditResponse(BaseModel):
     @property
     def price_float(self) -> float:
         """Convert microcents to dollars."""
-        return self.p / 100_000_000
+        return self.p / GOOGDIT_PRICE_DIVISOR
 
     @property
     def in_stock(self) -> bool:
