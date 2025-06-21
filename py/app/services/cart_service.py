@@ -1,42 +1,39 @@
-"""Corrected version of ShoppingCartManager with fixed bugs and improved design."""
-
-from typing import List, Optional, Union
 from pathlib import Path
-import json
 import logging
+import json
 from pydantic import ValidationError
+from app.utils.constants import DEFAULT_TAX_RATE
+from app.models.cart import ShoppingCart, ShoppingCartData
+from app.models.coupon import ShoppingCartCoupon
 
-from ..models.cart import ShoppingCart, ShoppingCartData
-from ..models.coupon import ShoppingCartCoupon
-from ..utils.constants import DEFAULT_TAX_RATE
 
 logger = logging.getLogger(__name__)
 
 
-class ShoppingCartManagerFixed:
-    """Fixed version of ShoppingCartManager with proper error handling and logic."""
+class ShoppingCartManager:
+    """Manages shopping cart features."""
 
     def __init__(self, tax_rate: float = DEFAULT_TAX_RATE):
         self.tax_rate = tax_rate
-        # Caching attributes for file loading
-        self._cart_cache: Optional[List[ShoppingCart]] = None
-        self._coupons_cache: Optional[List[ShoppingCartCoupon]] = None
-        self._last_cart_path: Optional[Path] = None
-        self._last_coupons_path: Optional[Path] = None
+        # Caching for file loading
+        self._cart_cache: list[ShoppingCart] | None = None
+        self._coupons_cache: list[ShoppingCartCoupon] | None = None
+        self._last_cart_path: Path | None = None
+        self._last_coupons_path: Path | None = None
 
-    def calculate_subtotal(self, cart_items: List[ShoppingCart]) -> float:
+    def calculate_subtotal(self, cart_items: list[ShoppingCart]) -> float:
         """Calculate the subtotal of the shopping cart."""
         if not cart_items:
             return 0.0
         return round(sum(item.price for item in cart_items), 2)
 
-    def calculate_tax(self, cart_items: List[ShoppingCart]) -> float:
+    def calculate_tax(self, cart_items: list[ShoppingCart]) -> float:
         """Calculate the tax for taxable items only."""
         taxable_items = [item for item in cart_items if item.isTaxable]
         return round(sum(item.price * self.tax_rate for item in taxable_items), 2)
 
     def apply_coupon_to_item(
-        self, cart_item: ShoppingCart, coupons: List[ShoppingCartCoupon]
+        self, cart_item: ShoppingCart, coupons: list[ShoppingCartCoupon]
     ) -> float:
         """Apply the best applicable coupon to a single cart item."""
         applicable_coupons = [
@@ -50,8 +47,8 @@ class ShoppingCartManagerFixed:
         return round(discounted_price, 2)
 
     def apply_coupons_to_cart(
-        self, cart_items: List[ShoppingCart], coupons: List[ShoppingCartCoupon]
-    ) -> List[ShoppingCart]:
+        self, cart_items: list[ShoppingCart], coupons: list[ShoppingCartCoupon]
+    ) -> list[ShoppingCart]:
         """Apply coupons to all applicable items in the cart."""
         return [
             ShoppingCart(
@@ -66,8 +63,8 @@ class ShoppingCartManagerFixed:
 
     def calculate_totals(
         self,
-        cart_items: List[ShoppingCart],
-        coupons: Optional[List[ShoppingCartCoupon]] = None,
+        cart_items: list[ShoppingCart],
+        coupons: list[ShoppingCartCoupon] | None = None,
     ) -> ShoppingCartData:
         """Calculate grand total with or without coupons."""
         if not cart_items:
@@ -87,16 +84,16 @@ class ShoppingCartManagerFixed:
             subTotal=subtotal, taxTotal=tax_total, grandTotal=grand_total
         )
 
-    # Feature-specific methods for clarity
+    # Feature-specific methods
     def calculate_totals_no_tax(
-        self, cart_items: List[ShoppingCart]
+        self, cart_items: list[ShoppingCart]
     ) -> ShoppingCartData:
         """Feature 1: Calculate total without tax."""
         subtotal = self.calculate_subtotal(cart_items)
         return ShoppingCartData(subTotal=subtotal, taxTotal=0.0, grandTotal=subtotal)
 
     def calculate_totals_tax_all(
-        self, cart_items: List[ShoppingCart]
+        self, cart_items: list[ShoppingCart]
     ) -> ShoppingCartData:
         """Feature 2: Calculate total with tax on all items."""
         subtotal = self.calculate_subtotal(cart_items)
@@ -108,19 +105,19 @@ class ShoppingCartManagerFixed:
         )
 
     def calculate_totals_tax_taxable_only(
-        self, cart_items: List[ShoppingCart]
+        self, cart_items: list[ShoppingCart]
     ) -> ShoppingCartData:
         """Feature 3: Calculate total with tax only on taxable items."""
         subtotal = self.calculate_subtotal(cart_items)
-        tax_total = self.calculate_tax(cart_items)  # Tax only on taxable items
+        tax_total = self.calculate_tax(cart_items)
         grand_total = round(subtotal + tax_total, 2)
 
         return ShoppingCartData(
             subTotal=subtotal, taxTotal=tax_total, grandTotal=grand_total
         )
 
-    # File loading methods
-    def load_json_file(self, file_path: Union[str, Path], data_class) -> List:
+    # File loading
+    def load_json_file(self, file_path: str, data_class) -> list:
         """Generic method to load JSON data and convert to Pydantic model instances."""
         path = Path(file_path)
 
@@ -159,7 +156,7 @@ class ShoppingCartManagerFixed:
             logger.error(f"Unexpected error loading {path}: {e}")
             return []
 
-    def load_cart(self, file_path: Union[str, Path]) -> List[ShoppingCart]:
+    def load_cart(self, file_path: str) -> list[ShoppingCart]:
         """Load the shopping cart content from a JSON file with caching."""
         path = Path(file_path)
 
@@ -175,7 +172,7 @@ class ShoppingCartManagerFixed:
         self._last_cart_path = path
         return self._cart_cache
 
-    def load_coupons(self, file_path: Union[str, Path]) -> List[ShoppingCartCoupon]:
+    def load_coupons(self, file_path: str) -> list[ShoppingCartCoupon]:
         """Load the coupons from a JSON file with caching."""
         path = Path(file_path)
 
@@ -198,11 +195,11 @@ class ShoppingCartManagerFixed:
         self._last_cart_path = None
         self._last_coupons_path = None
 
-    # File-based convenience methods
+    # File-based
     def calculate_totals_from_file(
         self,
-        cart_file_path: Union[str, Path],
-        coupon_file_path: Optional[Union[str, Path]] = None,
+        cart_file_path: str,
+        coupon_file_path: str | None = None,
     ) -> ShoppingCartData:
         """Calculate totals by loading data from files."""
         cart_items = self.load_cart(cart_file_path)
@@ -214,89 +211,22 @@ class ShoppingCartManagerFixed:
             return self.calculate_totals(cart_items)
 
     def calculate_totals_tax_all_from_file(
-        self, cart_file_path: Union[str, Path]
+        self, cart_file_path: str
     ) -> ShoppingCartData:
         """Feature 2: Calculate total with tax on all items from file."""
         cart_items = self.load_cart(cart_file_path)
         return self.calculate_totals_tax_all(cart_items)
 
     def calculate_totals_tax_taxable_only_from_file(
-        self, cart_file_path: Union[str, Path]
+        self, cart_file_path: str
     ) -> ShoppingCartData:
         """Feature 3: Calculate total with tax only on taxable items from file."""
         cart_items = self.load_cart(cart_file_path)
         return self.calculate_totals_tax_taxable_only(cart_items)
 
     def calculate_totals_no_tax_from_file(
-        self, cart_file_path: Union[str, Path]
+        self, cart_file_path: str
     ) -> ShoppingCartData:
         """Feature 1: Calculate total without tax from file."""
         cart_items = self.load_cart(cart_file_path)
         return self.calculate_totals_no_tax(cart_items)
-
-
-# Example usage and comparison
-if __name__ == "__main__":
-    manager = ShoppingCartManagerFixed()
-
-    # Load data from JSON files
-    try:
-        cart_items = manager.load_cart("cart.json")
-        coupons = manager.load_coupons("coupons.json")
-        print(
-            f"✅ Loaded {len(cart_items)} cart items and {len(coupons)} coupons from files"
-        )
-    except Exception as e:
-        print(f"❌ Failed to load from files: {e}")
-        # Fallback to sample data
-        cart_items = [
-            ShoppingCart(
-                itemName="Brownies",
-                sku=85294241,
-                isTaxable=False,
-                ownBrand=True,
-                price=3.61,
-            ),
-            ShoppingCart(
-                itemName="Shampoo",
-                sku=12345678,
-                isTaxable=True,
-                ownBrand=False,
-                price=8.99,
-            ),
-        ]
-
-        coupons = [
-            ShoppingCartCoupon(
-                couponName="Brownie Discount", appliedSku=85294241, discountPrice=0.79
-            )
-        ]
-        print("📝 Using fallback sample data")
-
-    # Test different features
-    print("Feature 1 (No tax):", manager.calculate_totals_no_tax(cart_items))
-    print("Feature 2 (Tax all):", manager.calculate_totals_tax_all(cart_items))
-    print(
-        "Feature 3 (Tax taxable only):",
-        manager.calculate_totals_tax_taxable_only(cart_items),
-    )
-    print("With coupons:", manager.calculate_totals(cart_items, coupons))
-
-    # Test file-based calculations (assuming JSON files are correctly formatted)
-    print("File-based calculations:")
-    print(
-        "Feature 1 (No tax) from file:",
-        manager.calculate_totals_no_tax_from_file("path/to/cart.json"),
-    )
-    print(
-        "Feature 2 (Tax all) from file:",
-        manager.calculate_totals_tax_all_from_file("path/to/cart.json"),
-    )
-    print(
-        "Feature 3 (Tax taxable only) from file:",
-        manager.calculate_totals_tax_taxable_only_from_file("path/to/cart.json"),
-    )
-    print(
-        "With coupons from file:",
-        manager.calculate_totals_from_file("path/to/cart.json", "path/to/coupons.json"),
-    )

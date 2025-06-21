@@ -1,5 +1,5 @@
 """
-Unit tests for ShoppingCartManagerFixed service.
+Unit tests for ShoppingCartManager service.
 """
 
 import pytest
@@ -7,24 +7,24 @@ import json
 import tempfile
 from pathlib import Path
 
-from app.services.cart_service import ShoppingCartManagerFixed
+from app.services.cart_service import ShoppingCartManager
 from app.models.cart import ShoppingCart, ShoppingCartData
 from app.models.coupon import ShoppingCartCoupon
 from app.utils.constants import DEFAULT_TAX_RATE
 
 
-class TestShoppingCartManagerFixed:
+class TestShoppingCartManager:
     """Test the fixed shopping cart manager."""
 
     @pytest.fixture
     def manager(self):
         """Create a shopping cart manager instance."""
-        return ShoppingCartManagerFixed()
+        return ShoppingCartManager()
 
     @pytest.fixture
     def custom_tax_manager(self):
         """Create a shopping cart manager with custom tax rate."""
-        return ShoppingCartManagerFixed(tax_rate=0.10)  # 10% tax
+        return ShoppingCartManager(tax_rate=0.10)  # 10% tax
 
     @pytest.fixture
     def sample_cart_items(self):
@@ -287,7 +287,7 @@ class TestFileOperations:
     @pytest.fixture
     def manager(self):
         """Create a shopping cart manager instance."""
-        return ShoppingCartManagerFixed()
+        return ShoppingCartManager()
 
     @pytest.fixture
     def temp_cart_file(self, sample_cart_items):
@@ -530,7 +530,7 @@ class TestEdgeCases:
     @pytest.fixture
     def manager(self):
         """Create a shopping cart manager instance."""
-        return ShoppingCartManagerFixed()
+        return ShoppingCartManager()
 
     def test_calculate_totals_with_zero_price_items(self, manager):
         """Test calculation with zero-price items."""
