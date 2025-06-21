@@ -3,16 +3,14 @@ Unit tests for the Pydantic-based price comparison service.
 """
 
 import pytest
-import pytest_asyncio
 from unittest.mock import AsyncMock, MagicMock
-import httpx
 from pydantic import ValidationError
 
-from app.services.price_c import (
+from app.services.price_compare import (
     PriceComparisonService,
     PlatformConfig,
     PlatformType,
-    HebDigitalResponse,
+    AppediaResponse,
     MicromazonResponse,
     GoogditResponse,
     GoogditLocation,
@@ -25,9 +23,9 @@ class TestPydanticModels:
     """Test Pydantic model validation."""
 
     def test_APPEDIA_response_valid(self):
-        """Test valid HEB Digital response."""
+        """Test valid Appedia response."""
         data = {"price": "$4.77", "stock": 7}
-        response = HebDigitalResponse(**data)
+        response = AppediaResponse(**data)
 
         assert response.price == "$4.77"
         assert response.stock == 7
@@ -35,18 +33,18 @@ class TestPydanticModels:
         assert response.in_stock is True
 
     def test_APPEDIA_response_invalid_price(self):
-        """Test HEB Digital response with invalid price format."""
+        """Test Appedia response with invalid price format."""
         data = {"price": "4.77", "stock": 7}  # Missing $ sign
 
         with pytest.raises(ValidationError) as exc_info:
-            HebDigitalResponse(**data)
+            AppediaResponse(**data)
 
         assert "Price must start with $" in str(exc_info.value)
 
     def test_APPEDIA_response_out_of_stock(self):
-        """Test HEB Digital response when out of stock."""
+        """Test Appedia response when out of stock."""
         data = {"price": "$4.77", "stock": 0}
-        response = HebDigitalResponse(**data)
+        response = AppediaResponse(**data)
 
         assert response.in_stock is False
 
@@ -106,7 +104,7 @@ class TestPydanticModels:
         """Test valid price result."""
         result = PriceResult(
             platform=PlatformType.APPEDIA,
-            url="https://example.com",
+            url="https://example.com",  # Mock URL
             price=5.99,
             in_stock=True,
         )
@@ -213,7 +211,7 @@ class TestPriceComparisonService:
         assert PlatformType.GOOGDIT in service.platforms
 
     def test_add_remove_platform(self, service):
-        """Test adding and removing platforms."""
+        """Test adding and removing platforms. Assuming this is acceptable."""
         # Create a new config
         new_config = PlatformConfig(
             upc=123,
@@ -235,7 +233,7 @@ class TestPriceComparisonService:
 
     def test_get_platform_url(self, service):
         """Test URL generation for different platforms."""
-        # HEB Digital
+        # Appedia
         url = service.get_platform_url(PlatformType.APPEDIA, 123)
         assert "upc=123" in url
 
@@ -254,7 +252,7 @@ class TestPriceComparisonService:
 
     def test_parse_platform_response(self, service):
         """Test parsing platform-specific responses."""
-        # HEB Digital
+        # Appedia
         heb_data = {"price": "$4.77", "stock": 7}
         price, in_stock = service._parse_platform_response(
             PlatformType.APPEDIA, heb_data

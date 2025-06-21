@@ -1,3 +1,5 @@
+"""Shopping Cart Models."""
+
 from pydantic import BaseModel, Field, model_validator
 
 

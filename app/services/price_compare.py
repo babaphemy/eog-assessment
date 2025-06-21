@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class PlatformConfig(BaseModel):
-    """Configuration for a platform."""
+    """Platformm configuration."""
 
     upc: int = Field(..., gt=0, description="Universal Product Code")
     url: HttpUrl = Field(..., description="API endpoint URL")
@@ -26,8 +26,8 @@ class PlatformConfig(BaseModel):
     )
 
 
-class HebDigitalResponse(BaseModel):
-    """HEB Digital API response model."""
+class AppediaResponse(BaseModel):
+    """API response model."""
 
     price: str = Field(..., description="Price as string with $ sign")
     stock: int = Field(..., ge=0, description="Stock quantity")
@@ -198,7 +198,9 @@ class PriceComparisonService(BaseModel):
         """Parse platform-specific response data."""
         try:
             if platform == PlatformType.APPEDIA:
-                response = HebDigitalResponse(**data)
+                response = AppediaResponse(
+                    **data
+                )  # Note: use model_validate if their are unnecesary links that may be copied
                 return response.price_float, response.in_stock
 
             elif platform == PlatformType.MICROMAZON:
@@ -219,7 +221,7 @@ class PriceComparisonService(BaseModel):
     async def fetch_data_from_platform(
         self, platform: PlatformType, upc: int, client: httpx.AsyncClient
     ) -> PriceResult:
-        """Fetch data from a specific platform."""
+        """Fetch data from a given platform."""
         url = self.get_platform_url(platform, upc)
 
         try:
@@ -322,47 +324,3 @@ class PriceComparisonService(BaseModel):
     def find_best_price(self, upc: int) -> ComparisonResult:
         """Main method to find the best price for a UPC."""
         return self.compare_prices_sync(upc)
-
-
-# Example usage
-if __name__ == "__main__":
-    # Configure logging
-    logging.basicConfig(level=logging.INFO)
-
-    # Create service
-    service = PriceComparisonService()
-
-    # Test with UPC 101
-    print("=== Price Comparison for UPC 101 ===")
-    result = service.find_best_price(101)
-
-    print(f"UPC: {result.upc}")
-    print(f"Best Platform: {result.best_platform}")
-    print(
-        f"Best Price: ${result.best_price:.2f}"
-        if result.best_price
-        else "No price found"
-    )
-    print(f"Best URL: {result.best_url}")
-    print(f"Message: {result.message}")
-
-    print("\n=== All Platform Results ===")
-    for price_result in result.all_results:
-        status = "✅" if price_result.is_valid else "❌"
-        print(
-            f"{status} {price_result.platform}: ${price_result.price:.2f} ({'In Stock' if price_result.in_stock else 'Out of Stock'})"
-        )
-        if price_result.error_message:
-            print(f"   Error: {price_result.error_message}")
-
-    # Test adding a new platform
-    print("\n=== Adding Custom Platform ===")
-    custom_config = PlatformConfig(
-        upc=101,
-        url="https://example.com/api/products/101",
-        platform=PlatformType.APPEDIA,  # Or create a new enum value
-    )
-
-    # This would work with a real API endpoint
-    # service.add_platform(custom_config)
-    print("Custom platform configuration created successfully")

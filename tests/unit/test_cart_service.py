@@ -26,56 +26,8 @@ class TestShoppingCartManager:
         """Create a shopping cart manager with custom tax rate."""
         return ShoppingCartManager(tax_rate=0.10)  # 10% tax
 
-    @pytest.fixture
-    def sample_cart_items(self):
-        """Sample cart items for testing."""
-        return [
-            ShoppingCart(
-                itemName="H-E-B Two Bite Brownies",
-                sku=85294241,
-                isTaxable=False,
-                ownBrand=True,
-                price=3.61,
-            ),
-            ShoppingCart(
-                itemName="Halo Top Vanilla Bean Ice Cream",
-                sku=95422042,
-                isTaxable=True,
-                ownBrand=False,
-                price=3.31,
-            ),
-            ShoppingCart(
-                itemName="Taxable Test Item",
-                sku=12345678,
-                isTaxable=True,
-                ownBrand=True,
-                price=10.00,
-            ),
-        ]
-
-    @pytest.fixture
-    def sample_coupons(self):
-        """Sample coupons for testing."""
-        return [
-            ShoppingCartCoupon(
-                couponName="Brownie Discount",
-                appliedSku=85294241,
-                discountPrice=0.79,
-            ),
-            ShoppingCartCoupon(
-                couponName="Ice Cream Discount",
-                appliedSku=95422042,
-                discountPrice=1.00,
-            ),
-            ShoppingCartCoupon(
-                couponName="Better Ice Cream Discount",  # Better discount for same item
-                appliedSku=95422042,
-                discountPrice=1.50,
-            ),
-        ]
-
     def test_initialization_default_tax(self, manager):
-        """Test manager initialization with default tax rate."""
+        """Test cart manager initialization with default tax rate."""
         assert manager.tax_rate == DEFAULT_TAX_RATE
         assert manager._cart_cache is None
         assert manager._coupons_cache is None
@@ -127,9 +79,7 @@ class TestShoppingCartManager:
         expected = round(taxable_total * 0.10, 2)  # 1.33
         assert result == expected
 
-    def test_apply_coupon_to_item_no_applicable_coupons(
-        self, manager, sample_cart_items, sample_coupons
-    ):
+    def test_apply_coupon_to_item_no_applicable_coupons(self, manager, sample_coupons):
         """Test applying coupon when no coupons apply to the item."""
         # Create an item with SKU that has no matching coupons
         item = ShoppingCart(
@@ -288,52 +238,6 @@ class TestFileOperations:
     def manager(self):
         """Create a shopping cart manager instance."""
         return ShoppingCartManager()
-
-    @pytest.fixture
-    def temp_cart_file(self, sample_cart_items):
-        """Create a temporary cart JSON file."""
-        cart_data = [
-            {
-                "itemName": item.itemName,
-                "sku": item.sku,
-                "isTaxable": item.isTaxable,
-                "ownBrand": item.ownBrand,
-                "price": item.price,
-            }
-            for item in sample_cart_items
-        ]
-
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
-            json.dump(cart_data, f)
-            temp_path = Path(f.name)
-
-        yield temp_path
-
-        # Cleanup
-        if temp_path.exists():
-            temp_path.unlink()
-
-    @pytest.fixture
-    def temp_coupons_file(self, sample_coupons):
-        """Create a temporary coupons JSON file."""
-        coupon_data = [
-            {
-                "couponName": coupon.couponName,
-                "appliedSku": coupon.appliedSku,
-                "discountPrice": coupon.discountPrice,
-            }
-            for coupon in sample_coupons
-        ]
-
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
-            json.dump(coupon_data, f)
-            temp_path = Path(f.name)
-
-        yield temp_path
-
-        # Cleanup
-        if temp_path.exists():
-            temp_path.unlink()
 
     @pytest.fixture
     def sample_cart_items(self):

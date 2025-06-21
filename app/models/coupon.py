@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class ShoppingCartCoupon(BaseModel):
-    """Represents available coupon for the shopping cart."""
+    """Available coupons."""
 
     couponName: str = Field(..., min_length=1, description="Name of the coupon")
     appliedSku: int = Field(..., gt=0, description="SKU this coupon applies to")
@@ -13,7 +13,7 @@ class ShoppingCartCoupon(BaseModel):
     @field_validator("couponName")
     @classmethod
     def validate_coupon_name(cls, v: str) -> str:
-        """Validate that coupon name is not empty after stripping whitespace."""
+        """The coupon name is not empty after stripping whitespace."""
         if not v.strip():
             raise ValueError("Coupon name cannot be empty or just whitespace")
         return v.strip()

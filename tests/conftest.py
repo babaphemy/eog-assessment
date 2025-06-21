@@ -43,10 +43,19 @@ def sample_coupons() -> List[ShoppingCartCoupon]:
     """Fixture providing sample coupons."""
     return [
         ShoppingCartCoupon(
-            couponName="Brownie Discount", appliedSku=85294241, discountPrice=0.79
+            couponName="Brownie Discount",
+            appliedSku=85294241,
+            discountPrice=0.79,
         ),
         ShoppingCartCoupon(
-            couponName="Test Discount", appliedSku=12345678, discountPrice=2.00
+            couponName="Ice Cream Discount",
+            appliedSku=95422042,
+            discountPrice=1.00,
+        ),
+        ShoppingCartCoupon(
+            couponName="Better Ice Cream Discount",  # Better discount for same item. Assumption: many coupons can apply to the same item.
+            appliedSku=95422042,
+            discountPrice=1.50,
         ),
     ]
 

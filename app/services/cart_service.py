@@ -28,14 +28,14 @@ class ShoppingCartManager:
         return round(sum(item.price for item in cart_items), 2)
 
     def calculate_tax(self, cart_items: list[ShoppingCart]) -> float:
-        """Calculate the tax for taxable items only."""
+        """Calculate tax for taxable items only."""
         taxable_items = [item for item in cart_items if item.isTaxable]
         return round(sum(item.price * self.tax_rate for item in taxable_items), 2)
 
     def apply_coupon_to_item(
         self, cart_item: ShoppingCart, coupons: list[ShoppingCartCoupon]
     ) -> float:
-        """Apply the best applicable coupon to a single cart item."""
+        """Apply the best applicable coupon to a cart item."""
         applicable_coupons = [
             coupon for coupon in coupons if coupon.appliedSku == cart_item.sku
         ]
@@ -97,7 +97,7 @@ class ShoppingCartManager:
     ) -> ShoppingCartData:
         """Feature 2: Calculate total with tax on all items."""
         subtotal = self.calculate_subtotal(cart_items)
-        tax_total = round(subtotal * self.tax_rate, 2)  # Tax on ALL items
+        tax_total = round(subtotal * self.tax_rate, 2)
         grand_total = round(subtotal + tax_total, 2)
 
         return ShoppingCartData(
@@ -118,7 +118,7 @@ class ShoppingCartManager:
 
     # File loading
     def load_json_file(self, file_path: str, data_class) -> list:
-        """Generic method to load JSON data and convert to Pydantic model instances."""
+        """Generic method to load JSON data and convert to Pydantic instances."""
         path = Path(file_path)
 
         try:
