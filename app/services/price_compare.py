@@ -90,7 +90,7 @@ class PriceComparisonService(BaseModel):
             if platform == PlatformType.APPEDIA:
                 response = AppediaResponse(
                     **data
-                )  # Note: use model_validate if their are unnecesary links that may be copied
+                )  # Note: use model_validate if there are unnecesary links that may be copied
                 return response.price_float, response.in_stock
 
             elif platform == PlatformType.MICROMAZON:

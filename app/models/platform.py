@@ -92,22 +92,6 @@ class GoogditResponse(BaseModel):
         return any(location.q > 0 for location in self.a)
 
 
-# class Platform(BaseModel):
-#     """A price comparison platform."""
-
-#     url: HttpUrl = Field(..., description="Platform URL (must be valid HTTP/HTTPS)")
-#     name: str = Field(..., min_length=1, description="Platform name")
-#     platform_type: PlatformType = Field(..., description="Type of platform")
-
-#     @field_validator("name")
-#     @classmethod
-#     def validate_name(cls, v: str) -> str:
-#         """The platform name is not empty after stripping whitespace."""
-#         if not v.strip():
-#             raise ValueError("Platform name cannot be empty or just whitespace")
-#         return v.strip()
-
-
 class PriceResult(BaseModel):
     """Standardized price result."""
 
@@ -149,11 +133,11 @@ class ComparisonResult(BaseModel):
     @property
     def display_price(self) -> str:
         """Get formatted price for display."""
-        if not self.available:
+        if self.best_price is None or self.best_price <= 0:
             return "Not available"
-        if self.price == 0:
+        if self.best_price == 0:
             return "Free"
-        return f"${self.price:.2f}"
+        return f"${self.best_price:.2f}"
 
     def __lt__(self, other: "PriceResult") -> bool:
         """Comparison between PriceResult objects."""
