@@ -24,7 +24,7 @@ from app.services.price_c import (
 class TestPydanticModels:
     """Test Pydantic model validation."""
 
-    def test_heb_digital_response_valid(self):
+    def test_APPEDIA_response_valid(self):
         """Test valid HEB Digital response."""
         data = {"price": "$4.77", "stock": 7}
         response = HebDigitalResponse(**data)
@@ -34,7 +34,7 @@ class TestPydanticModels:
         assert response.price_float == 4.77
         assert response.in_stock is True
 
-    def test_heb_digital_response_invalid_price(self):
+    def test_APPEDIA_response_invalid_price(self):
         """Test HEB Digital response with invalid price format."""
         data = {"price": "4.77", "stock": 7}  # Missing $ sign
 
@@ -43,7 +43,7 @@ class TestPydanticModels:
 
         assert "Price must start with $" in str(exc_info.value)
 
-    def test_heb_digital_response_out_of_stock(self):
+    def test_APPEDIA_response_out_of_stock(self):
         """Test HEB Digital response when out of stock."""
         data = {"price": "$4.77", "stock": 0}
         response = HebDigitalResponse(**data)
@@ -105,20 +105,20 @@ class TestPydanticModels:
     def test_price_result_valid(self):
         """Test valid price result."""
         result = PriceResult(
-            platform=PlatformType.HEB_DIGITAL,
+            platform=PlatformType.APPEDIA,
             url="https://example.com",
             price=5.99,
             in_stock=True,
         )
 
         assert result.is_valid is True
-        assert result.platform == PlatformType.HEB_DIGITAL
+        assert result.platform == PlatformType.APPEDIA
 
     def test_price_result_invalid_combinations(self):
         """Test invalid price result combinations."""
         # Out of stock
         result1 = PriceResult(
-            platform=PlatformType.HEB_DIGITAL,
+            platform=PlatformType.APPEDIA,
             url="https://example.com",
             price=5.99,
             in_stock=False,
@@ -127,7 +127,7 @@ class TestPydanticModels:
 
         # Zero price
         result2 = PriceResult(
-            platform=PlatformType.HEB_DIGITAL,
+            platform=PlatformType.APPEDIA,
             url="https://example.com",
             price=0.0,
             in_stock=True,
@@ -136,7 +136,7 @@ class TestPydanticModels:
 
         # Has error message
         result3 = PriceResult(
-            platform=PlatformType.HEB_DIGITAL,
+            platform=PlatformType.APPEDIA,
             url="https://example.com",
             price=5.99,
             in_stock=True,
@@ -147,7 +147,7 @@ class TestPydanticModels:
     def test_price_result_comparison(self):
         """Test price result comparison for sorting."""
         result1 = PriceResult(
-            platform=PlatformType.HEB_DIGITAL,
+            platform=PlatformType.APPEDIA,
             url="https://example.com",
             price=5.99,
             in_stock=True,
@@ -167,25 +167,25 @@ class TestPydanticModels:
         """Test platform configuration validation."""
         # Valid config
         config = PlatformConfig(
-            upc=101, url="https://example.com/api", platform=PlatformType.HEB_DIGITAL
+            upc=101, url="https://example.com/api", platform=PlatformType.APPEDIA
         )
         assert config.upc == 101
 
         # Invalid UPC (zero or negative)
         with pytest.raises(ValidationError):
             PlatformConfig(
-                upc=0, url="https://example.com/api", platform=PlatformType.HEB_DIGITAL
+                upc=0, url="https://example.com/api", platform=PlatformType.APPEDIA
             )
 
         # Invalid URL
         with pytest.raises(ValidationError):
-            PlatformConfig(upc=101, url="not-a-url", platform=PlatformType.HEB_DIGITAL)
+            PlatformConfig(upc=101, url="not-a-url", platform=PlatformType.APPEDIA)
 
     def test_comparison_result_model(self):
         """Test comparison result model."""
         result = ComparisonResult(
             upc=101,
-            best_platform=PlatformType.HEB_DIGITAL,
+            best_platform=PlatformType.APPEDIA,
             best_price=4.99,
             best_url="https://example.com",
             message="Best price found",
@@ -193,7 +193,7 @@ class TestPydanticModels:
         )
 
         assert result.upc == 101
-        assert result.best_platform == PlatformType.HEB_DIGITAL
+        assert result.best_platform == PlatformType.APPEDIA
         assert result.best_price == 4.99
 
 
@@ -208,7 +208,7 @@ class TestPriceComparisonService:
     def test_service_initialization(self, service):
         """Test service initialization with default platforms."""
         assert len(service.platforms) == 3
-        assert PlatformType.HEB_DIGITAL in service.platforms
+        assert PlatformType.APPEDIA in service.platforms
         assert PlatformType.MICROMAZON in service.platforms
         assert PlatformType.GOOGDIT in service.platforms
 
@@ -218,25 +218,25 @@ class TestPriceComparisonService:
         new_config = PlatformConfig(
             upc=123,
             url="https://newplatform.com/api",
-            platform=PlatformType.HEB_DIGITAL,  # Reusing existing enum
+            platform=PlatformType.APPEDIA,  # Reusing existing enum
         )
 
         # Add platform
         initial_count = len(service.platforms)
         service.add_platform(new_config)
 
-        # Should replace existing HEB_DIGITAL config
+        # Should replace existing APPEDIA config
         assert len(service.platforms) == initial_count
-        assert service.platforms[PlatformType.HEB_DIGITAL].upc == 123
+        assert service.platforms[PlatformType.APPEDIA].upc == 123
 
         # Remove platform
-        service.remove_platform(PlatformType.HEB_DIGITAL)
-        assert PlatformType.HEB_DIGITAL not in service.platforms
+        service.remove_platform(PlatformType.APPEDIA)
+        assert PlatformType.APPEDIA not in service.platforms
 
     def test_get_platform_url(self, service):
         """Test URL generation for different platforms."""
         # HEB Digital
-        url = service.get_platform_url(PlatformType.HEB_DIGITAL, 123)
+        url = service.get_platform_url(PlatformType.APPEDIA, 123)
         assert "upc=123" in url
 
         # Micromazon
@@ -248,16 +248,16 @@ class TestPriceComparisonService:
         assert url.endswith("/123")
 
         # Non-existent platform
-        service.remove_platform(PlatformType.HEB_DIGITAL)
+        service.remove_platform(PlatformType.APPEDIA)
         with pytest.raises(ValueError, match="Platform .* not configured"):
-            service.get_platform_url(PlatformType.HEB_DIGITAL, 123)
+            service.get_platform_url(PlatformType.APPEDIA, 123)
 
     def test_parse_platform_response(self, service):
         """Test parsing platform-specific responses."""
         # HEB Digital
         heb_data = {"price": "$4.77", "stock": 7}
         price, in_stock = service._parse_platform_response(
-            PlatformType.HEB_DIGITAL, heb_data
+            PlatformType.APPEDIA, heb_data
         )
         assert price == 4.77
         assert in_stock is True
@@ -291,10 +291,10 @@ class TestPriceComparisonService:
         mock_client.get.return_value = mock_response
 
         result = await service.fetch_data_from_platform(
-            PlatformType.HEB_DIGITAL, 101, mock_client
+            PlatformType.APPEDIA, 101, mock_client
         )
 
-        assert result.platform == PlatformType.HEB_DIGITAL
+        assert result.platform == PlatformType.APPEDIA
         assert result.price == 4.77
         assert result.in_stock is True
         assert result.is_valid is True
@@ -309,10 +309,10 @@ class TestPriceComparisonService:
         mock_client.get.return_value = mock_response
 
         result = await service.fetch_data_from_platform(
-            PlatformType.HEB_DIGITAL, 999, mock_client
+            PlatformType.APPEDIA, 999, mock_client
         )
 
-        assert result.platform == PlatformType.HEB_DIGITAL
+        assert result.platform == PlatformType.APPEDIA
         assert result.is_valid is False
         assert "not found" in result.error_message.lower()
 
@@ -320,7 +320,7 @@ class TestPriceComparisonService:
         """Test analyzing results with valid prices."""
         results = [
             PriceResult(
-                platform=PlatformType.HEB_DIGITAL, url="url1", price=5.99, in_stock=True
+                platform=PlatformType.APPEDIA, url="url1", price=5.99, in_stock=True
             ),
             PriceResult(
                 platform=PlatformType.MICROMAZON,
@@ -341,7 +341,7 @@ class TestPriceComparisonService:
         """Test analyzing results with no valid prices."""
         results = [
             PriceResult(
-                platform=PlatformType.HEB_DIGITAL,
+                platform=PlatformType.APPEDIA,
                 url="url1",
                 price=0.0,
                 in_stock=False,

@@ -191,7 +191,7 @@ class PriceComparisonService(BaseModel):
         url_str = str(base_config.url)
 
         # Replace the UPC in the URL
-        if platform == PlatformType.HEB_DIGITAL:
+        if platform == PlatformType.APPEDIA:
             return url_str.replace("upc=101", f"upc={upc}")
         elif platform == PlatformType.MICROMAZON:
             return url_str.replace("/101/", f"/{upc}/")
@@ -205,7 +205,7 @@ class PriceComparisonService(BaseModel):
     ) -> tuple[float, bool]:
         """Parse platform-specific response data."""
         try:
-            if platform == PlatformType.HEB_DIGITAL:
+            if platform == PlatformType.APPEDIA:
                 response = HebDigitalResponse(**data)
                 return response.price_float, response.in_stock
 
@@ -368,7 +368,7 @@ if __name__ == "__main__":
     custom_config = PlatformConfig(
         upc=101,
         url="https://example.com/api/products/101",
-        platform=PlatformType.HEB_DIGITAL,  # Or create a new enum value
+        platform=PlatformType.APPEDIA,  # Or create a new enum value
     )
 
     # This would work with a real API endpoint
