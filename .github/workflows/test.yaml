@@ -27,7 +27,7 @@ jobs:
         run: uv pip install --system -e . # Assumes pyproject.toml is in repo root
 
       - name: Run test-cart
-        run: uv run pytest py/tests/unit/test_cart_service_fixed.py
+        run: uv run pytest py/tests/unit/test_cart_service.py
 
       - name: Run test-price
         run: uv run pytest py/tests/unit/test_price_c.py

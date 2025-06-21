@@ -5,23 +5,12 @@ from typing import Optional
 from pydantic import BaseModel, Field, field_validator, HttpUrl
 
 
-class PlatformType(Enum):
-    """Enumeration of supported platforms."""
+class PlatformType(str, Enum):
+    """Supported platforms for price comparison."""
 
-    GOOGDIT = "googdit"
-    APPEDIA = "appedia"
-    MICROMAZON = "micromazon"
-
-    def __str__(self) -> str:
-        return self.value
-
-    @classmethod
-    def from_string(cls, value: str) -> "PlatformType":
-        """Create PlatformType from string value."""
-        try:
-            return cls(value.lower())
-        except ValueError:
-            raise ValueError(f"Unknown platform type: {value}")
+    APPEDIA = "Appedia"
+    MICROMAZON = "Micromazon"
+    GOOGDIT = "Googdit"
 
 
 class Platform(BaseModel):

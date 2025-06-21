@@ -7,7 +7,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from app.services.cart_service_fixed import ShoppingCartManagerFixed
+from app.services.cart_service import ShoppingCartManagerFixed
 from app.models.cart import ShoppingCart, ShoppingCartData
 from app.models.coupon import ShoppingCartCoupon
 from app.utils.constants import DEFAULT_TAX_RATE

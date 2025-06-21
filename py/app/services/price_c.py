@@ -6,20 +6,12 @@ import asyncio
 import logging
 from typing import Dict, List, Optional
 from app.utils.constants import GOOGDIT_PRICE_DIVISOR
-from enum import Enum
+from app.models.platform import PlatformType
 
 import httpx
 from pydantic import BaseModel, HttpUrl, Field, field_validator, ConfigDict
 
 logger = logging.getLogger(__name__)
-
-
-class PlatformType(str, Enum):
-    """Supported platforms for price comparison."""
-
-    APPEDIA = "Appedia"
-    MICROMAZON = "Micromazon"
-    GOOGDIT = "Googdit"
 
 
 class PlatformConfig(BaseModel):
