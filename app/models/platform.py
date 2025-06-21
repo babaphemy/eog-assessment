@@ -15,7 +15,7 @@ class PlatformType(str, Enum):
 
 
 class PlatformConfig(BaseModel):
-    """Platformm configuration."""
+    """Platform configuration."""
 
     upc: int = Field(..., gt=0, description="Universal Product Code")
     url: HttpUrl = Field(..., description="API endpoint URL")
