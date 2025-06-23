@@ -108,7 +108,7 @@ class ShoppingCartManager:
         # Calculate totals
         subtotal = self.calculate_subtotal(final_items)
         tax_total = self.calculate_tax(final_items)
-        grand_total = round(subtotal + tax_total, 2)
+        grand_total = self.round_to_two_decimals(subtotal + tax_total)
 
         return ShoppingCartData(
             subTotal=subtotal, taxTotal=tax_total, grandTotal=grand_total
