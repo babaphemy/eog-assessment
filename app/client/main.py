@@ -7,8 +7,8 @@ if __name__ == "__main__":
 
     # Load data from JSON files
     try:
-        cart_items = manager.load_cart("data/cart.json")
-        coupons = manager.load_coupons("data/coupons.json")
+        cart_items = manager.load_cart("app/data/cart.json")
+        coupons = manager.load_coupons("app/data/coupons.json")
         print(
             f"✅ Loaded {len(cart_items)} cart items and {len(coupons)} coupons from files"
         )
@@ -52,17 +52,19 @@ if __name__ == "__main__":
     print("File-based calculations:")
     print(
         "Feature 1 (No tax) from file:",
-        manager.calculate_totals_no_tax_from_file("data/cart.json"),
+        manager.calculate_totals_no_tax_from_file("app/data/cart.json"),
     )
     print(
         "Feature 2 (Tax all) from file:",
-        manager.calculate_totals_tax_all_from_file("data/cart.json"),
+        manager.calculate_totals_tax_all_from_file("app/data/cart.json"),
     )
     print(
         "Feature 3 (Tax taxable only) from file:",
-        manager.calculate_totals_tax_taxable_only_from_file("data/cart.json"),
+        manager.calculate_totals_tax_taxable_only_from_file("app/data/cart.json"),
     )
     print(
         "With coupons from file:",
-        manager.calculate_totals_from_file("data/cart.json", "data/coupons.json"),
+        manager.calculate_totals_from_file(
+            "app/data/cart.json", "app/data/coupons.json"
+        ),
     )
