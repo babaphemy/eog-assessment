@@ -3,5 +3,5 @@ test-cart:
 test-price:
 	uv run pytest tests/unit/test_price_compare.py
 run:
-	uv run python app/client/main.py
+	PYTHONPATH=. uv run python app/client/main.py
 tests: test-cart test-price
