@@ -5,7 +5,7 @@ from app.services.cart_service import ShoppingCartManager
 if __name__ == "__main__":
     manager = ShoppingCartManager()
 
-    # Load data from JSON file
+    # Load data from JSON files
     try:
         cart_items = manager.load_cart("data/cart.json")
         coupons = manager.load_coupons("data/coupons.json")
