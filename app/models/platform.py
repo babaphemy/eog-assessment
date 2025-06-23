@@ -138,18 +138,3 @@ class ComparisonResult(BaseModel):
         if self.best_price == 0:
             return "Free"
         return f"${self.best_price:.2f}"
-
-    def __lt__(self, other: "PriceResult") -> bool:
-        """Comparison between PriceResult objects."""
-        if not isinstance(other, PriceResult):
-            return NotImplemented
-
-        # Invalid results are always "greater" (worse)
-        if not self.is_valid and not other.is_valid:
-            return False
-        if not self.is_valid:
-            return False
-        if not other.is_valid:
-            return True
-
-        return self.price < other.price
